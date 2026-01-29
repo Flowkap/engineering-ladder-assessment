@@ -13,11 +13,56 @@ COLORS = {'background': 'black', 'grid': 'white', 'plot': 'yellow'}
 OUTPUT_DIR = 'out'
 
 AXES_CONFIG = {
-    'Technology': ['Adopts', 'Specializes', 'Evangelizes', 'Masters', 'Creates'],
-    'System': ['Enhances', 'Designs', 'Owns', 'Evolves', 'Leads'],
-    'People': ['Learns', 'Supports', 'Mentors', 'Coordinates', 'Manages'],
-    'Process': ['Follows', 'Enforces', 'Challenges', 'Adjusts', 'Defines'],
-    'Influence': ['Subsystem', 'Team', 'Multiple Teams', 'Company', 'Community']
+    'Technology': {
+        'levels': ['Adopts', 'Specializes', 'Evangelizes', 'Masters', 'Creates'],
+        'descriptions': [
+            'Actively learns and adopts new technologies',
+            'Develops deep expertise in specific technologies',
+            'Shares knowledge and promotes best practices',
+            'Recognized expert with advanced knowledge',
+            'Invents or significantly contributes to technologies'
+        ]
+    },
+    'System': {
+        'levels': ['Enhances', 'Designs', 'Owns', 'Evolves', 'Leads'],
+        'descriptions': [
+            'Enhances and improves existing systems',
+            'Designs and implements systems within requirements',
+            'Takes ownership of system components and evolution',
+            'Drives system evolution and architectural improvements',
+            'Leads system architecture across multiple teams'
+        ]
+    },
+    'People': {
+        'levels': ['Learns', 'Supports', 'Mentors', 'Coordinates', 'Manages'],
+        'descriptions': [
+            'Learns from team members and receives guidance',
+            'Provides support and guidance to team members',
+            'Actively mentors and develops other engineers',
+            'Coordinates across teams and stakeholders',
+            'Manages people and teams effectively'
+        ]
+    },
+    'Process': {
+        'levels': ['Follows', 'Enforces', 'Challenges', 'Adjusts', 'Defines'],
+        'descriptions': [
+            'Follows established processes and procedures',
+            'Ensures team adherence to processes',
+            'Questions and improves existing processes',
+            'Adapts processes to team and project needs',
+            'Creates and defines new processes'
+        ]
+    },
+    'Influence': {
+        'levels': ['Subsystem', 'Team', 'Multiple Teams', 'Company', 'Community'],
+        'descriptions': [
+            'Influences decisions within a subsystem',
+            'Influences decisions across the team',
+            'Influences decisions across multiple teams',
+            'Influences decisions across the company',
+            'Influences decisions in the broader community'
+        ]
+    }
 }
 
 
@@ -63,11 +108,17 @@ def get_user_input():
     """Collect and validate user scores for each axis."""
     print("Engineering Ladder Assessment")
     print("=" * 40)
-    print(f"Enter scores from {SCORE_RANGE[0]} to {SCORE_RANGE[1]} for each dimension:")
+    print(f"Enter scores from {SCORE_RANGE[0]} to {SCORE_RANGE[1]} for each dimension.")
     print()
 
     scores = []
-    for axis in AXES_CONFIG.keys():
+    for axis, config in AXES_CONFIG.items():
+        print(f"\n{axis}:")
+        print("-" * 40)
+        for i, (level, desc) in enumerate(zip(config['levels'], config['descriptions']), 1):
+            print(f"  {i} - {level}: {desc}")
+        print()
+
         while True:
             try:
                 user_input = input(f"Enter {axis} score ({SCORE_RANGE[0]}-{SCORE_RANGE[1]}): ")
@@ -86,6 +137,48 @@ def get_user_input():
                 sys.exit(0)
 
     return scores
+
+
+def assess_level(scores):
+    """Assess engineering level based on scores."""
+    avg = sum(scores) / len(scores)
+
+    if avg < 1.5:
+        level = "Junior"
+        description = "You're at the beginning of your engineering journey, focusing on learning and growth."
+    elif avg < 2.5:
+        level = "Junior-ish"
+        description = "You're progressing beyond junior, building foundations across multiple areas."
+    elif avg < 3.0:
+        level = "Mid-Level"
+        description = "You're a solid mid-level engineer with growing expertise and influence."
+    elif avg < 3.5:
+        level = "Mid-Level-ish"
+        description = "You're transitioning toward senior, showing leadership in several dimensions."
+    elif avg < 4.0:
+        level = "Senior"
+        description = "You're operating at a senior level with strong skills across the board."
+    elif avg < 4.5:
+        level = "Senior-ish"
+        description = "You're beyond senior, approaching staff/principal level impact."
+    else:
+        level = "Staff/Principal"
+        description = "You're operating at staff or principal level with exceptional breadth and depth."
+
+    return level, avg, description
+
+
+def print_assessment(scores):
+    """Print the level assessment summary."""
+    level, avg, description = assess_level(scores)
+
+    print("\n" + "=" * 40)
+    print("ASSESSMENT SUMMARY")
+    print("=" * 40)
+    print(f"Average Score: {avg:.1f}/5")
+    print(f"Level: {level}")
+    print(f"\n{description}")
+    print("=" * 40)
 
 
 def create_output_directory():
@@ -109,6 +202,9 @@ def create_radar_chart(scores):
     plot_values = scores + [scores[0]]
     plot_angles = angles + [angles[0]]
 
+    # Get level assessment
+    eng_level, avg, description = assess_level(scores)
+
     # Setup figure
     fig, ax = plt.subplots(figsize=CHART_SIZE, subplot_kw=dict(polar=True))
     fig.patch.set_facecolor(COLORS['background'])
@@ -118,7 +214,7 @@ def create_radar_chart(scores):
     ax.set_theta_offset(np.pi / 2)
     ax.set_theta_direction(-1)
     ax.set_xticks(angles)
-    ax.set_xticklabels(AXES_CONFIG.keys(), color=COLORS['grid'], fontsize=12)
+    ax.set_xticklabels(list(AXES_CONFIG.keys()), color=COLORS['grid'], fontsize=12)
     ax.set_rlabel_position(0)
     ax.yaxis.grid(False)
 
@@ -139,8 +235,8 @@ def create_radar_chart(scores):
         ax.plot([angle, angle], [0, frame_limit], color=COLORS['grid'], linewidth=0.5)
 
     # Add level labels
-    for i, (axis, levels) in enumerate(AXES_CONFIG.items()):
-        for j, level_name in enumerate(levels):
+    for i, (axis, config) in enumerate(AXES_CONFIG.items()):
+        for j, level_name in enumerate(config['levels']):
             ax.text(angles[i], j + 1, level_name, color=COLORS['grid'],
                     fontsize=8, ha='center', va='center')
 
@@ -148,7 +244,13 @@ def create_radar_chart(scores):
     ax.plot(plot_angles, plot_values, color=COLORS['plot'], linewidth=2)
     ax.fill(plot_angles, plot_values, color=COLORS['plot'], alpha=0.2)
 
-    plt.tight_layout()
+    # Add level assessment text at the bottom
+    fig.text(0.5, 0.06, f"{eng_level}", ha='center', va='bottom',
+             fontsize=16, color=COLORS['plot'], fontweight='bold')
+    fig.text(0.5, 0.02, f"Average: {avg:.1f}/5 — {description}", ha='center', va='bottom',
+             fontsize=10, color=COLORS['grid'])
+
+    plt.tight_layout(rect=[0, 0.08, 1, 1])
 
     # Create output directory and save with timestamp
     create_output_directory()
@@ -165,6 +267,7 @@ def main():
 
     try:
         scores = get_user_input()
+        print_assessment(scores)
         create_radar_chart(scores)
     except KeyboardInterrupt:
         print("\nOperation cancelled by user")

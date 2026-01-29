@@ -10,6 +10,7 @@ For the original framework refer to the awesome page https://www.engineeringladd
 
 - **Interactive Assessment**: Rate yourself across 5 key engineering dimensions
 - **Visual Radar Chart**: Generate professional-looking spider/radar charts
+- **Level Assessment**: Get an approximate level (Junior, Mid-Level, Senior, etc.) based on your scores
 - **Customizable Output**: Save charts as high-resolution PNG images
 
 ## 📊 Assessment Dimensions
@@ -26,13 +27,15 @@ The tool evaluates you across five key areas:
 
 ### 2. **System**
 
-- **Designs**: Designs and implements systems within defined requirements
-- **Owns**: Takes ownership of system components and their evolution
+- **Enhances**: Enhances and improves existing systems
+- **Designs**: Designs and implements systems within requirements
+- **Owns**: Takes ownership of system components and evolution
 - **Evolves**: Drives system evolution and architectural improvements
 - **Leads**: Leads system architecture across multiple teams
 
 ### 3. **People**
 
+- **Learns**: Learns from team members and receives guidance
 - **Supports**: Provides support and guidance to team members
 - **Mentors**: Actively mentors and develops other engineers
 - **Coordinates**: Coordinates across teams and stakeholders
@@ -58,10 +61,45 @@ The tool evaluates you across five key areas:
 
 ### Prerequisites
 
-- Python 3.7 or higher
-- pip package manager
+- Python 3.11 or higher
+- [Poetry](https://python-poetry.org/) package manager
 
-### Option 1: Using pip
+### Install with Poetry
 
 ```bash
-pip install -r requirements.txt
+poetry install
+```
+
+## 🎮 Usage
+
+Run the assessment:
+
+```bash
+poetry run engineering-ladder
+```
+
+Or alternatively:
+
+```bash
+poetry run python main.py
+```
+
+## 📈 Level Assessment
+
+Based on your average score across all dimensions, the tool provides an approximate engineering level:
+
+| Average Score | Level |
+|--------------|-------|
+| 1.0 - 1.4 | Junior |
+| 1.5 - 2.4 | Junior-ish |
+| 2.5 - 2.9 | Mid-Level |
+| 3.0 - 3.4 | Mid-Level-ish |
+| 3.5 - 3.9 | Senior |
+| 4.0 - 4.4 | Senior-ish |
+| 4.5 - 5.0 | Staff/Principal |
+
+The level is displayed both in the terminal output and on the generated radar chart.
+
+## 📄 License
+
+MIT
