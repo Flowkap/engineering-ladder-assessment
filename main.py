@@ -7,30 +7,30 @@ from datetime import datetime
 
 # Configuration constants
 SCORE_RANGE = (1, 5)
-CHART_SIZE = (8, 8)
+CHART_SIZE = (10, 10)
 MAX_LEVELS = 5
 COLORS = {'background': 'black', 'grid': 'white', 'plot': 'yellow'}
 OUTPUT_DIR = 'out'
 
 AXES_CONFIG = {
-    'Technology': {
-        'levels': ['Adopts', 'Specializes', 'Evangelizes', 'Masters', 'Creates'],
+    'Enablement': {
+        'levels': ['Operates', 'Curates', 'Orchestrates', 'Architects', 'Pioneers'],
         'descriptions': [
-            'Actively learns and adopts new technologies',
-            'Develops deep expertise in specific technologies',
-            'Shares knowledge and promotes best practices',
-            'Recognized expert with advanced knowledge',
-            'Invents or significantly contributes to technologies'
+            'Uses AI agents and tools productively, understands output quality',
+            'Selects appropriate tools/agents, defines constraints and guardrails',
+            'Composes complex agent workflows, multiplies throughput',
+            'Designs the technical enablement strategy for teams',
+            'Creates new enablement paradigms, shapes how the organization works'
         ]
     },
     'System': {
-        'levels': ['Enhances', 'Designs', 'Owns', 'Evolves', 'Leads'],
+        'levels': ['Comprehends', 'Designs', 'Owns', 'Evolves', 'Leads'],
         'descriptions': [
-            'Enhances and improves existing systems',
-            'Designs and implements systems within requirements',
-            'Takes ownership of system components and evolution',
-            'Drives system evolution and architectural improvements',
-            'Leads system architecture across multiple teams'
+            'Understands existing system architectures and their trade-offs',
+            'Designs systems (specifies rather than implements)',
+            'Owns system health, detects degradation',
+            'Drives evolution under changing requirements',
+            'Leads architecture across team boundaries'
         ]
     },
     'People': {
@@ -53,14 +53,34 @@ AXES_CONFIG = {
             'Creates and defines new processes'
         ]
     },
-    'Influence': {
-        'levels': ['Subsystem', 'Team', 'Multiple Teams', 'Company', 'Community'],
+    'Impact': {
+        'levels': ['Task', 'Team', 'Domain', 'Organization', 'Industry'],
         'descriptions': [
-            'Influences decisions within a subsystem',
-            'Influences decisions across the team',
-            'Influences decisions across multiple teams',
-            'Influences decisions across the company',
-            'Influences decisions in the broader community'
+            'Reliably delivers results within own scope',
+            'Elevates the effectiveness of the entire team',
+            'Sustainably shapes a domain',
+            'Changes how the organization works',
+            'Influences the industry'
+        ]
+    },
+    'Product\nThinking': {
+        'levels': ['Understands', 'Shapes', 'Drives', 'Strategizes', 'Visions'],
+        'descriptions': [
+            'Understands user needs behind tickets, asks "why"',
+            'Actively shapes requirements, spots gaps and contradictions',
+            'Drives product decisions independently, validates hypotheses',
+            'Connects technical possibilities with business strategy',
+            'Defines product vision at the intersection of technology and market'
+        ]
+    },
+    'Judgement': {
+        'levels': ['Executes', 'Evaluates', 'Challenges', 'Navigates', 'Calibrates'],
+        'descriptions': [
+            'Makes good decisions in well-defined situations',
+            'Weighs trade-offs, identifies risks, decides under uncertainty',
+            'Questions assumptions, identifies systemic risks',
+            'Navigates complex, multi-dimensional decision spaces',
+            'Calibrates decision frameworks for the organization'
         ]
     }
 }
@@ -70,7 +90,7 @@ def setup_argument_parser():
     """Setup command line argument parser."""
     parser = argparse.ArgumentParser(
         description='Engineering Ladder Assessment - Generate a radar chart visualization '
-                    'of technical leadership skills across 5 dimensions.',
+                    'of engineering skills across 7 dimensions for the AI agent era.',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -78,11 +98,13 @@ Examples:
   python main.py -h                 # Show this help message
 
 Assessment Dimensions:
-  Technology: Technical skill and knowledge depth
-  System: System design and architecture abilities  
-  People: Team collaboration and mentoring skills
-  Process: Process improvement and methodology skills
-  Influence: Scope of impact and leadership reach
+  Enablement:       Ability to leverage AI agents, tools, and workflows effectively
+  System:           System design, architecture, and ownership
+  People:           Team collaboration and mentoring skills
+  Process:          Process improvement and methodology skills
+  Impact:           Scope and depth of measurable outcomes
+  Product Thinking: Understanding user needs, shaping requirements, driving product decisions
+  Judgement:        Quality of decisions under uncertainty and complexity
 
 Each dimension is scored from 1-5 representing different capability levels.
 The output is a radar chart saved as 'out/engineering_ladder_<timestamp>.png'.
@@ -113,7 +135,8 @@ def get_user_input():
 
     scores = []
     for axis, config in AXES_CONFIG.items():
-        print(f"\n{axis}:")
+        display_name = axis.replace('\n', ' ')
+        print(f"\n{display_name}:")
         print("-" * 40)
         for i, (level, desc) in enumerate(zip(config['levels'], config['descriptions']), 1):
             print(f"  {i} - {level}: {desc}")
@@ -121,7 +144,7 @@ def get_user_input():
 
         while True:
             try:
-                user_input = input(f"Enter {axis} score ({SCORE_RANGE[0]}-{SCORE_RANGE[1]}): ")
+                user_input = input(f"Enter {display_name} score ({SCORE_RANGE[0]}-{SCORE_RANGE[1]}): ")
                 if not user_input.strip():
                     print("Please enter a value")
                     continue
